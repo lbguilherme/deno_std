@@ -1,7 +1,10 @@
 {
   "nodeVersion": "18.12.0",
   "ignore": {
-    "common": ["index.js", "tmpdir.js"],
+    "common": [
+      "index.js",
+      "tmpdir.js"
+    ],
     "fixtures": [
       "child-process-spawn-node.js",
       "elipses.txt",
@@ -93,6 +96,24 @@
     ]
   },
   "tests": {
+    "async-hooks": [
+      "test-async-local-storage-args.js",
+      "test-async-local-storage-async-await.js",
+      "test-async-local-storage-async-functions.js",
+      "test-async-local-storage-enable-disable.js",
+      "test-async-local-storage-enter-with.js",
+      "test-async-local-storage-errors.js",
+      "test-async-local-storage-gcable.js",
+      "test-async-local-storage-http-agent.js",
+      "test-async-local-storage-http.js",
+      "test-async-local-storage-misc-stores.js",
+      "test-async-local-storage-nested.js",
+      "test-async-local-storage-no-mix-contexts.js",
+      "test-async-local-storage-promises.js",
+      "test-async-local-storage-socket.js",
+      "test-async-local-storage-thenable.js",
+      "test-async-local-storage-tlssocket.js"
+    ],
     "common": [
       "countdown.js",
       "dns.js",
@@ -128,6 +149,8 @@
       "test-assert-async.js",
       "test-assert-fail.js",
       "test-assert.js",
+      "test-async-local-storage-deep-stack.js",
+      "test-async-local-storage-http-multiclients.js",
       "test-btoa-atob.js",
       "test-buffer-alloc.js",
       "test-buffer-arraybuffer.js",

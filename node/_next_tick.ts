@@ -7,10 +7,12 @@ import { core } from "./_core.ts";
 import { validateFunction } from "./internal/validators.mjs";
 import { _exiting } from "./_process/exiting.ts";
 import { FixedQueue } from "./internal/fixed_queue.ts";
+import { AsyncResource } from "./async_hooks.ts";
 
 interface Tock {
   callback: (...args: Array<unknown>) => void;
   args: Array<unknown>;
+  asyncResource: AsyncResource;
 }
 
 const queue = new FixedQueue();
@@ -28,28 +30,29 @@ export function processTicksAndRejections() {
       // emitBefore(asyncId, tock[trigger_async_id_symbol], tock);
 
       try {
-        const callback = (tock as Tock).callback;
-        if ((tock as Tock).args === undefined) {
-          callback();
-        } else {
-          const args = (tock as Tock).args;
-          switch (args.length) {
-            case 1:
-              callback(args[0]);
-              break;
-            case 2:
-              callback(args[0], args[1]);
-              break;
-            case 3:
-              callback(args[0], args[1], args[2]);
-              break;
-            case 4:
-              callback(args[0], args[1], args[2], args[3]);
-              break;
-            default:
-              callback(...args);
+        const { callback, args, asyncResource } = (tock as Tock);
+        asyncResource.runInAsyncScope(() => {
+          if (args === undefined) {
+            callback();
+          } else {
+            switch (args.length) {
+              case 1:
+                callback(args[0]);
+                break;
+              case 2:
+                callback(args[0], args[1]);
+                break;
+              case 3:
+                callback(args[0], args[1], args[2]);
+                break;
+              case 4:
+                callback(args[0], args[1], args[2], args[3]);
+                break;
+              default:
+                callback(...args);
+            }
           }
-        }
+        });
       } finally {
         // FIXME(bartlomieju): Deno currently doesn't support async hooks
         // if (destroyHooksExist())
@@ -133,6 +136,7 @@ if (typeof core.setNextTickCallback !== "undefined") {
       // [trigger_async_id_symbol]: triggerAsyncId,
       callback,
       args: args_,
+      asyncResource: new AsyncResource("TickObject"),
     };
     // FIXME(bartlomieju): Deno currently doesn't support async hooks
     // if (initHooksExist())

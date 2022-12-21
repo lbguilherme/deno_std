@@ -8,6 +8,7 @@
  */
 
 export * from "./abortable.ts";
+export * from "./async_local.ts";
 export * from "./deadline.ts";
 export * from "./debounce.ts";
 export * from "./deferred.ts";

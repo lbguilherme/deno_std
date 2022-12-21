@@ -9,24 +9,24 @@ const encoder = new TextEncoder();
 
 const NODE_API_BASE_URL = "https://api.github.com/repos/nodejs/node";
 const NODE_BASE_URL = "https://github.com/nodejs/node";
-const NODE_IGNORED_TEST_DIRS = [
-  "addons",
-  "async-hooks",
-  "cctest",
-  "doctool",
-  "embedding",
-  "fixtures",
-  "fuzzers",
-  "js-native-api",
-  "node-api",
-  "overlapped-checker",
-  "report",
-  "testpy",
-  "tick-processor",
-  "tools",
-  "v8-updates",
-  "wasi",
-  "wpt",
+const NODE_IGNORED_TESTS = [
+  /^addons\//,
+  /^async-hooks\/(?!test-async-local-storage)/,
+  /^cctest\//,
+  /^doctool\//,
+  /^embedding\//,
+  /^fixtures\//,
+  /^fuzzers\//,
+  /^js-native-api\//,
+  /^node-api\//,
+  /^overlapped-checker\//,
+  /^report\//,
+  /^testpy\//,
+  /^tick-processor\//,
+  /^tools\//,
+  /^v8-updates\//,
+  /^wasi\//,
+  /^wpt\//,
 ];
 
 async function getNodeTestDirSHA(): Promise<string> {
@@ -45,7 +45,7 @@ async function getNodeTests(sha: string): Promise<string[]> {
   return body.tree
     .filter(({ path }: Object) =>
       path.includes("/test-") && path.endsWith(".js") &&
-      !NODE_IGNORED_TEST_DIRS.some((dir) => path.startsWith(dir))
+      !NODE_IGNORED_TESTS.some((regex) => regex.test(path))
     )
     .map(({ path }: Object) => path);
 }
